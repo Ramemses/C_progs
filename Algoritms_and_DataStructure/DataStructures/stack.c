@@ -2,21 +2,23 @@
 #include <stdlib.h>
 #include <limits.h>
 
-
+//---------------------------- DATA STRUCTURES ---------------------------
 typedef struct node_t{
 	int data;
 	struct node_t* next;
-}	Node;
+}	StackNode;
 
 
 typedef struct stack_t{
-	Node* top;
+	StackNode* top;
 } Stack;
+//------------------------------------------------------------------
 
 
-Node* create_node(int data)
+//--------------------- CONSTRUCTORS---------------------------------------
+StackNode* create_node(int data)
 {
-	Node* node = calloc(1, sizeof(Node));
+	StackNode* node = calloc(1, sizeof(StackNode));
 	if (node == NULL) return NULL;
 
 	node->data = data;
@@ -24,7 +26,6 @@ Node* create_node(int data)
 
 	return node;
 }
-
 
 Stack* create_stack()
 {
@@ -34,7 +35,12 @@ Stack* create_stack()
 	stack->top = NULL;
 	return stack;
 }
+//------------------------------------------------------------------------
 
+
+//-----------------------------------------METHODS-------------------------
+
+//Sow top of stack without delete
 void peek(Stack* stack)
 {
 	if (stack == NULL){
@@ -51,7 +57,7 @@ void peek(Stack* stack)
 }
 void push(Stack* stack, int data)
 {
-	Node* node = create_node(data);
+	StackNode* node = create_node(data);
 	if (node == NULL) return; 
 	
 	node->next = stack->top;
@@ -64,7 +70,7 @@ int pop(Stack* stack)
 	if (stack == NULL || stack->top == NULL) return INT_MIN;
 
 	int data;
-	Node* node = stack->top;
+	StackNode* node = stack->top;
 	stack->top = stack->top->next;
 	
 	data = node->data;
@@ -82,7 +88,7 @@ void clear_stack(Stack* stack)
 	}
 }
 
-
+//Just prints elements or stack or message of empty stack
 void show_stack(Stack* stack)
 {	
 	if (stack == NULL || stack->top == NULL){
@@ -90,7 +96,7 @@ void show_stack(Stack* stack)
 		return ;
 	}
 
-	Node* tmp = stack->top;
+	StackNode* tmp = stack->top;
 	while (tmp != NULL){
 		printf("%d ", tmp->data);
 		tmp = tmp->next;
@@ -99,6 +105,7 @@ void show_stack(Stack* stack)
 
 }
 
+//Reverses the order of elements in stack
 void stack_reverse(Stack* stack)
 {
 	if (stack == NULL || stack->top == NULL || stack->top->next == NULL){
@@ -106,19 +113,19 @@ void stack_reverse(Stack* stack)
 		return ;
 	}
 
-	Node* fst = NULL;
-	Node* snd = stack->top;
+	StackNode* fst = NULL;
+	StackNode* snd = stack->top;
 
-	while (snd != NULL){
-		Node* tmp = snd->next;
+	while (snd != NULL){ //In each interation we reverse the pointer from second to first element
+		StackNode* tmp = snd->next;
 		snd->next = fst;
 		fst = snd;
 		snd = tmp;
 	}
 	stack->top = fst;
-	
-
 }
+
+//---------------------------------------------------------------------------------
 
 
 int main(void)
