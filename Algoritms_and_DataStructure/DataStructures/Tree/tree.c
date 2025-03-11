@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 //------------STRUCTURES FOR TREE-----------------------
 typedef struct node_t{
 	int data;
@@ -11,6 +12,12 @@ typedef struct node_t{
 typedef struct tree_t{
 	Node* root;
 } Tree;
+
+
+typedef struct stack_t{
+	Node* top;
+	struct stack_t* next;
+} Stack;
 
 //-------------------------------------------------------
 
@@ -43,6 +50,7 @@ Tree* create_tree()
 	return tree;
 }
 //---------------------------------------------------------------
+
 
 
 //------TREE METHODS----------------
@@ -113,10 +121,47 @@ void delete(Tree* tree, int data)
 	
 	_delete_(&(tree->root), data);
 }
+//----------------------------------------------------------
 
 
+//--------STACK METHODS FOR TREE ORDER----------
+Stack* create_stack(Node* node)
+{
+	Stack* st = calloc(1, sizeof(Stack));	
+	if (st == NULL) return NULL;
+	
+	st->top = node;
+	st->next = NULL;
+}
 
-//------TREE METHODS----------------
+Node* pop(Stack** stack)
+{
+	if ((*stack)->top == NULL){
+		fprintf(stderr, "Error pop: the stack is empty!\n");
+		return NULL;
+	}
+
+	Stack* tmp = (*stack);
+	Node* node = tmp->top;
+	*stack = (*stack)->next;
+	free(tmp);
+
+	
+	return node;
+}
+
+void push(Stack** stack, Node* node)
+{
+	if ((*stack)->top == NULL){
+		(*stack)->top = node;
+		return;
+	}
+	Stack* st = create_stack(node);
+	st->next = (*stack);
+	(*stack) = st;
+}
+
+//--------------------------------------------
 
 
 
@@ -162,31 +207,26 @@ void preorder(Tree* tree)
 	printf("\n");
 }
 
+
+void level_order(Tree* tree)
+{
+	Stack* st = create_stack(tree->root);
+
+	while(st != NULL && st->top != NULL){	
+		Stack* st_ = create_stack(NULL);
+		while(st != NULL && st->top != NULL){
+			Node* node = pop(&st);
+			printf("%d ", node->data);	
+	
+			if (node->left != NULL) push(&st_, node->left);
+			if (node->right != NULL) push(&st_, node->right);
+		
+		}
+	    st = st_;
+	}	
+	printf("\n");
+
+}
 //------------------------------------------------------------------
 
 
-int main(void)
-{
-	Tree* tr = create_tree();
-	insert(tr, 4);
-	insert(tr, -100);
-	insert(tr, 1);
-	insert(tr, 24);
-	insert(tr, 2);
-	insert(tr, 0);
-	insert(tr, 5);
-	insert(tr, 6);
-	insert(tr, 10);
-
-	
-
-	inorder(tr);
-	delete(tr, 24);
-	delete(tr, 24);
-	inorder(tr);	
-	delete(tr, 0);
-	inorder(tr);
-
-
-	return 0;
-}
