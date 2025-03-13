@@ -58,6 +58,16 @@ int parce(char* string, char* name, char* sur_name, char* birthday, char* job)
 	return 0;
 }
 
+int callback(void* notUsed, int colCount, char** columns, char** colNames)
+{
+	for (int i = 0; i < colCount; i++)
+		printf("%s = %s\n", colNames[i], columns[i] ? columns[i] : "NULL");
+
+	printf("\n");
+	return 0 ;
+}
+
+
 int user_create(sqlite3* db)
 {
 	char* err_msg;
@@ -101,6 +111,22 @@ int user_add(sqlite3* db, char* name, char* sur_name, char* birthday, char* job)
 	printf("User has been added\n");
 	sqlite3_finalize(expr);
 	return 0;
+}
+
+int user_select(sqlite3* db)
+{
+	char* select_user_sql = "SELECT name, sur_name, birthday, job FROM user;";
+	char* err_msg = NULL;
+
+	
+	int result = sqlite3_exec(db, select_user_sql, callback, 0, &err_msg);
+	if (result != SQLITE_OK){
+		fprintf(stderr, "SQL error: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+	
+	return 0;	
 }
 
 int add_from_file(sqlite3* db, char* filename)
@@ -158,6 +184,7 @@ int main(void)
 	get_string(filename);
 
 	add_from_file(db, filename);
+	user_select(db);
 	
 	return 0;
 }
