@@ -121,6 +121,25 @@ void delete(Tree* tree, int data)
 	
 	_delete_(&(tree->root), data);
 }
+
+void _clear_(Node** node)
+{
+	if (*node == NULL) return;
+	_clear_(&((*node)->left));
+	_clear_(&((*node)->right));
+	if ((*node)->left == NULL && (*node)->right == NULL){
+		free(*node);
+		*node = NULL;
+		return;
+	}
+
+}
+
+void clear(Tree* tree)
+{
+	_clear_(&(tree->root));
+}
+
 //----------------------------------------------------------
 
 
@@ -228,5 +247,7 @@ void level_order(Tree* tree)
 
 }
 //------------------------------------------------------------------
+
+
 
 
