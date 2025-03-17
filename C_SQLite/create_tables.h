@@ -3,7 +3,7 @@
 
 
 	
-int __create__(sqlite3*, char*);
+int __makeSQL__(sqlite3*, char*);
 
 int create_faculty(sqlite3*);
 int create_direction(sqlite3*);
@@ -16,8 +16,6 @@ int create_attempt(sqlite3*);
 int create_tests(sqlite3*);
 
 
-sqlite3* start_session();
-void end_session(sqlite3* db);
 
 
 
